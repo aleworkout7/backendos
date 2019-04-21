@@ -5,6 +5,9 @@ class BoxController {
 
 		const box = await Box.create({ title: req.body.title });
 
+		//Noticio todos os usuarios de um novo box criado, representado com "createdBox"
+		req.io.sockets.in(123).emit("createdBox", box);
+
 		return res.json(box);
 	}
 
@@ -17,6 +20,18 @@ class BoxController {
 		});
 
 		return res.json(box);
+	}
+
+	async list(req, res){
+		try{
+			const box = await Box.find().sort({
+				createdAt: -1
+			});
+			return res.json(box);
+		}catch(err){
+			return res.status(400).send('Nao ha boxes disponiveis');
+		}
+		
 	}
 }
 

@@ -12,15 +12,28 @@ app.use(cors());
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
-io.on('connection', socket => {
+//Conecto o usuario numa sala unica
+io.on('connection', socket => { //Se executa cada vez que usuario abrir app no frontend
+	//O socket é a representacao da conexao com o server em tempo real
+	//creo rooms para cada box, é como criar uma rota
 	socket.on('ConnectRoom', box => {
-		socket.join(box);
+		//frontend vai requisitar essa ConnectRoom, pasando o id da box
+		socket.join(box); //Pego o socket que chamo essa ConnectRoom
+		//e entao dou um join na sala box
+	});
+
+	//Ate aqui estou conectando o usuario numa sala especifica
+	socket.on('ConnectAdmin', conexao => {
+		socket.join(conexao);
 	});
 });
 
 mongoose.connect('mongodb+srv://omnistack:omnistack@cluster0-otylu.mongodb.net/test?retryWrites=true', {
 	useNewUrlParser: true
 });
+
+//Como faco para enviar uma mensagem para o usuario em tempo real?
+//Assim...
 
 app.use((req, res, next) => {
 	req.io = io;
